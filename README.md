@@ -1,7 +1,7 @@
 # PhoneLLM on a single L40S (FP8, Modal + vLLM)
 
 **Why this repo exists:** it lets you run a GPT-5.6-level model for voice
-agents fully self-hosted for ~$1.5k/month. PhoneLLM's model card reports
+agents fully self-hosted for $1.5k/month. PhoneLLM's model card reports
 parity with GPT 5.6 Terra on voice-agent tasks; an always-on L40S on Modal is
 $1.95/hr (~$1,500/mo), serves ~16 concurrent calls, and your call data never
 leaves your infra.
