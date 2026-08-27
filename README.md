@@ -28,12 +28,11 @@ modal run modal_bench.py            # measure TTFT / throughput vs concurrency
 Measured by `modal_bench.py` running **inside Modal** (no WAN in the numbers what a bot co-located with the endpoint sees). Voice-agent style requests: ~150-token system prompt, short unique user turn, 80-token streamed completions; 3 rounds per level, stats pooled:
 
 | concurrency | TTFT p50 | TTFT p95 | tok/s per stream (p50) | tok/s min | aggregate tok/s |
-|---:|---:|---:|---:|---:|---:|
-| 1  | 260 ms | 270 ms | 170 | 170 | 88 |
-| 8  | 421 ms | 439 ms | 76  | 63  | 301 |
-| 16 | 486 ms | 518 ms | 57  | 46  | 477 |
-| 32 | 700 ms | 754 ms | 38  | 26  | 683 |
-
+| ----------: | -------: | -------: | ---------------------: | --------: | --------------: |
+|           1 |   260 ms |   270 ms |                    170 |       170 |              88 |
+|           8 |   421 ms |   439 ms |                     76 |        63 |             301 |
+|          16 |   486 ms |   518 ms |                     57 |        46 |             477 |
+|          32 |   700 ms |   754 ms |                     38 |        26 |             683 |
 
 Zero errors at every level. **Usable concurrency for voice: ~16 simultaneous
 calls per L40S** (TTFT p95 ≈ 520 ms; at 32 it degrades past ~750 ms). Decode
@@ -60,7 +59,7 @@ is a fine-tune of NVIDIA's Nemotron 3 Nano 30B-A3B, and NVIDIA publishes an
 [official FP8 build of that base model](https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8)
 reporting **~99% median accuracy recovery** vs bf16 - differences within
 noise on standard suites (MMLU-Pro 78.30 FP8 vs 78.10 bf16, GPQA 73.04 vs
-72.47, AIME25-with-tools 99.17 vs 98.80; FP8 occasionally scores *higher*).
+72.47, AIME25-with-tools 99.17 vs 98.80; FP8 occasionally scores _higher_).
 So for this architecture, well-executed FP8 is effectively lossless.
 
 One recipe difference worth knowing: NVIDIA's build selectively keeps the
@@ -71,6 +70,6 @@ alone.
 
 ## Next steps
 
-- [ ] Proper quality benchmark: rough FP8 vs bf16 on real traffic
+- [ ] Proper quality benchmark: rough FP8 vs bf16 on real scenarios
 - [ ] If quality drifts: re-quantize with NVIDIA's selective recipe
       (TensorRT Model Optimizer) and check it still fits one L40S
