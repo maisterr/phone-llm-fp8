@@ -3,7 +3,7 @@
 **Why this repo exists:** it lets you run a GPT-5.6-level model for voice
 agents fully self-hosted for ~$1.5k/month. PhoneLLM's model card reports
 parity with GPT 5.6 Terra on voice-agent tasks; an always-on L40S on Modal is
-~$1.95/hr (~$1,500/mo), serves ~16 concurrent calls, and your call data never
+$1.95/hr (~$1,500/mo), serves ~16 concurrent calls, and your call data never
 leaves your infra.
 
 [`pipecat-ai/phonellm-alpha-1`](https://huggingface.co/pipecat-ai/phonellm-alpha-1)
@@ -21,12 +21,11 @@ modal deploy modal_l40s_fp8.py      # serve it: 1x L40S, OpenAI-compatible endpo
 modal run modal_bench.py            # measure TTFT / throughput vs concurrency
 ```
 
+![Time to first token vs concurrent calls](assets/ttfb.png)
+
 ## Results
 
-Measured by `modal_bench.py` running **inside Modal** (no WAN in the numbers
-- what a bot co-located with the endpoint sees). Voice-agent style requests:
-~150-token system prompt, short unique user turn, 80-token streamed
-completions; 3 rounds per level, stats pooled:
+Measured by `modal_bench.py` running **inside Modal** (no WAN in the numbers what a bot co-located with the endpoint sees). Voice-agent style requests: ~150-token system prompt, short unique user turn, 80-token streamed completions; 3 rounds per level, stats pooled:
 
 | concurrency | TTFT p50 | TTFT p95 | tok/s per stream (p50) | tok/s min | aggregate tok/s |
 |---:|---:|---:|---:|---:|---:|
@@ -35,14 +34,13 @@ completions; 3 rounds per level, stats pooled:
 | 16 | 486 ms | 518 ms | 57  | 46  | 477 |
 | 32 | 700 ms | 754 ms | 38  | 26  | 683 |
 
-![Time to first token vs concurrent calls](assets/ttfb.png)
 
 Zero errors at every level. **Usable concurrency for voice: ~16 simultaneous
 calls per L40S** (TTFT p95 ≈ 520 ms; at 32 it degrades past ~750 ms). Decode
 speed never dropped below ~26 tok/s per stream - far above what real-time TTS
 consumes, so TTFT is the binding constraint.
 
-Calling over WAN instead adds your network RTT on top (from our dev box:
+Calling over WAN instead adds your network RTT n top (from our dev box:
 +~140 ms on the TTFT floor, same shape otherwise).
 
 ## Quality: FP8 vs the bf16 original
