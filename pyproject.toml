@@ -1,0 +1,9 @@
+[project]
+name = "phonellm-l40s-fp8"
+version = "0.1.0"
+description = "Quantize pipecat-ai/phonellm-alpha-1 to FP8 and serve it on a single L40S with vLLM on Modal"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "modal>=1.5",
+]
