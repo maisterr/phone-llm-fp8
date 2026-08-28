@@ -24,6 +24,11 @@ modal deploy modal_l40s_fp8.py      # serve it: 1x L40S, OpenAI-compatible endpo
 modal run modal_bench.py            # measure TTFT / throughput vs concurrency
 ```
 
+> ⚠️💸 **Cost warning:** `MIN_CONTAINERS = 1` in `modal_l40s_fp8.py` keeps one L40S
+> running 24/7 (~$1.95/hr, ~$1,400/mo) even with zero traffic. After
+> experiments, stop it: `modal app stop ep-phonellm-alpha-1-l40s-fp8`, or set
+> `MIN_CONTAINERS = 0` and redeploy for scale-to-zero.
+
 ![Time to first token vs concurrent calls](assets/ttfb.png)
 
 ## Results
