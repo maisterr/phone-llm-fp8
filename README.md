@@ -15,19 +15,48 @@ L40S on Modal** - roughly **1/3 the GPU cost of the B200** the model is
 demonstrated on. At `temperature=0` the FP8 output matched the bf16 endpoint
 byte-for-byte in our spot checks, and a single stream decodes at ~170 tok/s.
 
+## Quickstart
+
+**1. Quantize the model** (one-time, H200, ~10 min — writes the FP8 checkpoint to a Volume):
+
 ```sh
-modal run modal_quantize_fp8.py     # one-time: H200, ~10 min, writes FP8 checkpoint to a Volume
-modal deploy modal_l40s_fp8.py      # serve it: 1x L40S, OpenAI-compatible endpoint
-                                    #   -> copy the printed base URL into .env (MODAL_LLM_BASE_URL)
-                                    #   -> create a Proxy Auth Token (modal.com -> Settings) and
-                                    #      put it in .env as MODAL_LLM_API_KEY=wk-<id>.ws-<secret>
-modal run modal_bench.py            # measure TTFT / throughput vs concurrency
+modal run modal_quantize_fp8.py
 ```
 
-> ⚠️💸 **Cost warning:** `MIN_CONTAINERS = 1` in `modal_l40s_fp8.py` keeps one L40S
-> running 24/7 (~$1.95/hr, ~$1,400/mo) even with zero traffic. After
-> experiments, stop it: `modal app stop ep-phonellm-alpha-1-l40s-fp8`, or set
-> `MIN_CONTAINERS = 0` and redeploy for scale-to-zero.
+**2. Deploy the server** (1x L40S, OpenAI-compatible endpoint):
+
+```sh
+modal deploy modal_l40s_fp8.py
+```
+
+Copy the base URL it prints
+(`https://<workspace>--ep-phonellm-alpha-1-l40s-fp8-server-serve.modal.run`).
+
+**3. Configure `.env`:**
+
+```sh
+cp .env.example .env
+```
+
+- `MODAL_LLM_BASE_URL` — the URL from step 2
+- `MODAL_LLM_API_KEY` — create a Proxy Auth Token (modal.com → Settings →
+  Proxy Auth Tokens), paste as `wk-<id>.ws-<secret>`
+
+**4. Benchmark** (TTFT / throughput vs concurrency):
+
+```sh
+modal run modal_bench.py
+```
+
+**5. Stop the container when done:**
+
+```sh
+modal app stop ep-phonellm-alpha-1-l40s-fp8
+```
+
+> ⚠️💸 `MIN_CONTAINERS = 1` in `modal_l40s_fp8.py` keeps one L40S running 24/7
+> (~$1.95/hr, ~$1,400/mo) even with zero traffic. Don't skip this step — or
+> set `MIN_CONTAINERS = 0` and redeploy for scale-to-zero.
 
 ![Time to first token vs concurrent calls](assets/ttfb.png)
 
