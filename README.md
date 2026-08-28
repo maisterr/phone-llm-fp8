@@ -18,6 +18,9 @@ byte-for-byte in our spot checks, and a single stream decodes at ~170 tok/s.
 ```sh
 modal run modal_quantize_fp8.py     # one-time: H200, ~10 min, writes FP8 checkpoint to a Volume
 modal deploy modal_l40s_fp8.py      # serve it: 1x L40S, OpenAI-compatible endpoint
+                                    #   -> copy the printed base URL into .env (MODAL_LLM_BASE_URL)
+                                    #   -> create a Proxy Auth Token (modal.com -> Settings) and
+                                    #      put it in .env as MODAL_LLM_API_KEY=wk-<id>.ws-<secret>
 modal run modal_bench.py            # measure TTFT / throughput vs concurrency
 ```
 
@@ -70,6 +73,6 @@ alone.
 
 ## Next steps
 
-- [ ] Proper quality benchmark: rough FP8 vs bf16 on real scenarios
-- [ ] If quality drifts: re-quantize with NVIDIA's selective recipe
-      (TensorRT Model Optimizer) and check it still fits one L40S
+Tracked in [`docs/tasks/`](docs/tasks/README.md): quality benchmark FP8 vs
+bf16 first; NVIDIA's selective re-quantization recipe as fallback if quality
+drifts.

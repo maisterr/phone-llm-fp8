@@ -18,6 +18,10 @@ GPU = f"{GPU_TYPE}:{N_GPUS}"
 CPU = 16
 MEMORY_MB = 65536
 
+# 1 = one replica boots at deploy and stays warm (~$1.95/hr even idle);
+# 0 = scale to zero, first request pays a multi-minute cold start.
+MIN_CONTAINERS = 1
+
 SCALEDOWN_WINDOW = 5 * MINUTES
 TARGET_INPUTS = 40
 STARTUP_TIMEOUT = 60 * MINUTES
@@ -91,7 +95,7 @@ app = modal.App(name="ep-phonellm-alpha-1-l40s-fp8")
     gpu=GPU,
     cpu=CPU,
     memory=MEMORY_MB,
-    min_containers=0,
+    min_containers=MIN_CONTAINERS,
     scaledown_window=SCALEDOWN_WINDOW,
     timeout=10 * MINUTES,
     volumes={
